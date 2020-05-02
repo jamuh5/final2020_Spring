@@ -1,7 +1,7 @@
 ---
 title: "Aides Drug"
-author: "Put your name here!"
-date: "put the date here"
+author: "Janet Muhammad"
+date: "May 22, 2020"
 output: html_document
 ---
 
@@ -15,23 +15,58 @@ triUmp <-read.csv(file="triUmpsal.csv",header=TRUE)
 
 <!--In this section you explain what you are trying to show.  Where did the data come from?  What is the research or other question you are trying to answer?.  If you skimp in this section expect to be marked down in your grade. Paint a picture of the project a couple of paragraphs is expected!-->
 
-A new  preventative aides (triUmpsal) is under test in clinical trials. Analyze the effectiveness of this drug across the board. Consider population subgroups by gender, drug use, and sexual orientation. Finish this!
+A new  preventative aides (triUmpsal) is under test in clinical trials. Analyze the effectiveness of this drug across the board. Consider population subgroups by gender, drug use, and sexual orientation. The five areas of interest are 1. the general population, 2. males, 3.females, 4.drug users, and 5.the LGBTQ community
+
+In each case the effectiveness of the drug is examined. All variables are categorical  
 
 # Methods
+Since each variable is categorical, we use categorical~categorical in each analysis  
+
+Graphical summary:bar cahart
+Numeric summary: cross tabulation, table form  
+Inference:chi-squared test, fisher exact test 
+
+Conclusions for all questions will be summarized at the end  
 
 <!--Decide on your methods:  use "variable analysis" or other appropriate descriptors.  Make sure to choose at least one graphical method and at least one numerical method. Discuss what data manipulations may be needed for example subsetting or other binning procedures and what sort of graphical displays and inferential tools will be used!-->
 
-#Results
+
+# Results
 
 <!--Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.!-->
 
+
+
+## Question 1: is the drug effective in the general population?  
+
+$H_0$: the drug has no effect on whether or not one contracts Aids  
+$H_A$: the drug does have an effect on whether or not one contracts aids  
+
+
 ## Descriptive Results
+
 
 ### Graphical Descriptive Results
 
-<!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+
+```{r}
+barchartGC(~infected + treatment,data=triUmp,type="percent")
+```
+
+this graph show that among the general population, those who had the vaccine fewer contracted Aids than those who had the placebo  
+
+
+<!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
 
 ### Numerical Descriptive Results
+
+```{r}
+table1 <- xtabs(~infected + treatment, data=triUmp)
+rowPerc(table1)
+colPerc(table1)
+```
+
+This table shows that among those who contracted Aids, a smaller percent of those who got the treatment got the disease.  This suggests the treatment is likely effective.
 
 <!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
 
@@ -39,7 +74,227 @@ A new  preventative aides (triUmpsal) is under test in clinical trials. Analyze 
 
 <!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
 
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
+
+The chi-squared test for independence showed a p-value of 0.00000028 the chances of getting this result if $H_0$ were true is about 3 chances in 10 million
+
+Fisher's exact test shows the odds of acquiring Aids when one had the treatment are about .72:1, the confidence interval does not include 1, so this is a significant result.
 
 # Discussion and Conclusion
 
 <!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
+
+
+## Question 2: is the drug effective among females?  
+
+$H_0$: the drug has no effect on whether or not a woman contracts Aids  
+$H_A$: the drug does have an effect on whether or not a woman contracts aids  
+
+
+## Descriptive Results
+
+
+### Graphical Descriptive Results
+
+
+```{r}
+females = filter(triUmp,gender=="F")
+barchartGC(~infected + treatment,data = females,type="percent")
+```
+
+this graph show that among the female population, those who had the vaccine were more likely to contract Aids than those who had the placebo  
+
+
+<!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+
+### Numerical Descriptive Results
+
+```{r}
+table1 <- xtabs(~infected + treatment, data=females)
+rowPerc(table1)
+colPerc(table1)
+```
+
+This table shows that among those who contracted Aids, a larger percent of those got the treatment. this suggests the treatment has an effect; it may make women more susceptible to the disease. 
+
+<!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
+
+## Inferential Results
+
+<!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
+
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
+
+The chi-squared test for independence showed a p-value of 0.00007 the chances of getting this result if $H_0$ were true is about 7 chances in 100 thousand
+
+Fisher's exact test shows the odds of acquiring Aids when one had the treatment are about 1.5:1, a woman is more likely to acquire aids if given the treatment.  The confidence interval does not include 1, so this is a significant result.
+
+
+## Question 3: is the drug effective among males?  
+
+$H_0$: the drug has no effect on whether or not a man contracts Aids  
+$H_A$: the drug does have an effect on whether or not a man contracts aids  
+
+
+## Descriptive Results
+
+
+### Graphical Descriptive Results
+
+
+```{r}
+males = filter(triUmp,gender=="M")
+barchartGC(~infected + treatment,data = males,type="percent")
+```
+
+this graph show that among the male population, those who had the vaccine were more likely to contract Aids than those who had the placebo  
+
+
+<!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+
+### Numerical Descriptive Results
+
+```{r}
+table1 <- xtabs(~infected + treatment, data=males)
+rowPerc(table1)
+colPerc(table1)
+```
+
+This table shows that among those who contracted Aids, a larger percent of those got the treatment. this suggests the treatment has an effect; it may make women more susceptible to the disease. 
+
+<!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
+
+## Inferential Results
+
+<!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
+
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
+
+The chi-squared test for independence showed a p-value of 0.0000000000000002 the chances of getting this result if $H_0$ were true is about 2 chances in a gazillion. 
+
+Fisher's exact test shows the odds of acquiring Aids when one had the treatment are about 1.5:1, a woman is more likely to acquire aids if given the treatment.  The confidence interval does not include 1, so this is a significant result.
+
+
+
+## Question 4: is the drug effective among LGBTQ community?  
+
+$H_0$: the drug has no effect on whether or not a member of the LGBTQ community contracts Aids  
+$H_A$: the drug does have an effect on whether or not a member of the LGBTQ contracts aids  
+
+
+## Descriptive Results
+
+
+### Graphical Descriptive Results
+
+
+```{r}
+LGBTQ = filter(triUmp,LGBTQ != "straight")
+barchartGC(~infected + treatment,data = LGBTQ,type="percent")
+```
+
+this graph show that among the male population, those who had the vaccine were more likely to contract Aids than those who had the placebo  
+
+
+<!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+
+### Numerical Descriptive Results
+
+```{r}
+table1 <- xtabs(~infected + treatment, data=LGBTQ)
+rowPerc(table1)
+colPerc(table1)
+```
+
+This table shows that among those who contracted Aids, a larger percent of those got the treatment. this suggests the treatment has an effect; it may make women more susceptible to the disease. 
+
+<!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
+
+## Inferential Results
+
+<!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
+
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
+
+The chi-squared test for independence showed a p-value of 0.000005 the chances of getting this result if $H_0$ were true is about 5 chances in a million. 
+
+Fisher's exact test shows the odds of acquiring Aids when one had the treatment are about 2.7:1, a member of the LGBTQ community is more likely to acquire aids if given the treatment.  The confidence interval does not include 1, so this is a significant result.
+
+
+
+
+
+## Question 5: is the drug effective among drug users?  
+
+$H_0$: the drug has no effect on whether or not a drug user contracts Aids  
+$H_A$: the drug does have an effect on whether or not a drug user contracts aids  
+
+
+## Descriptive Results
+
+
+### Graphical Descriptive Results
+
+
+```{r}
+DrugUser = filter(triUmp,DrugUser == "yes")
+barchartGC(~infected + treatment,data = DrugUser,type="percent")
+```
+
+this graph show that among the drug users, those who had the vaccine were less likely to contract Aids than those who had the placebo  
+
+
+<!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+
+### Numerical Descriptive Results
+
+```{r}
+table1 <- xtabs(~infected + treatment, data=DrugUser)
+rowPerc(table1)
+colPerc(table1)
+```
+
+This table shows that among those who contracted Aids, a larger percent of those got the treatment. this suggests the treatment has an effect; it may make women more susceptible to the disease. 
+
+<!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
+
+## Inferential Results
+
+<!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
+
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
+
+The chi-squared test for independence showed a p-value of 0.000005 the chances of getting this result if $H_0$ were true is about 5 chances in a million. 
+
+Fisher's exact test shows the odds of acquiring Aids when one had the treatment are about 2.7:1, a member of the LGBTQ community is more likely to acquire aids if given the treatment.  The confidence interval does not include 1, so this is a significant result.
+
+
+
+# Discussion and Conclusion
+
+<!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
+
+
+
+
+
